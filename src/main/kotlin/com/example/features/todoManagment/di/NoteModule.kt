@@ -6,7 +6,6 @@ import com.example.features.todoManagment.domain.services.*
 import com.example.features.todoManagment.domain.usecase.*
 import com.example.features.todoManagment.infraestruture.persistence.repository.*
 import com.example.features.todoManagment.infraestruture.persistence.service.*
-import com.example.features.todoManagment.presentation.note.service.*
 import org.koin.dsl.*
 
 val noteModule = module {
@@ -30,8 +29,6 @@ val noteModule = module {
             get(),
         )
     }
-    single { NoteServiceEither(get()) }
-
 
     single<GetNoteListUseCase> { GetNoteListUseCase(get()) }
     single<GetNoteDetailUseCase> { GetNoteDetailUseCase(get()) }
