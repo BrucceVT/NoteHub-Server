@@ -6,6 +6,4 @@ import com.example.features.todoManagment.presentation.note.dto.*
 fun CreateNoteDto.toNote() = Note(
     title = title,
     content = content,
-    createdAt = createdAt,
-    updatedAt = 0
 )

@@ -7,6 +7,7 @@ import com.example.features.todoManagment.domain.entity.*
 import com.example.features.todoManagment.domain.reposity.*
 import com.example.features.todoManagment.infraestruture.persistence.entity.*
 import com.example.features.todoManagment.infraestruture.utils.mapper.toNote
+import com.example.features.todoManagment.infraestruture.utils.time.DateTimeUtils
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.transactions.*
 import java.util.*
@@ -46,8 +47,8 @@ class NoteRepositoryExposed : NoteRepository {
                         NoteTableEntity.new(note.id) {
                             title = note.title
                             content = note.content
-                            createdat = note.createdAt
-                            updatedat = note.updatedAt
+                            createdat = DateTimeUtils.getCurrentDateAsLong()
+                            updatedat = 0
                         }
                     }
                 ensureNotNull(newNote) { RepositoryFailure.UnknownError }
@@ -66,7 +67,7 @@ class NoteRepositoryExposed : NoteRepository {
                     ensureNotNull(note) { RepositoryFailure.NotFound }
                     noteById.title = note.title
                     noteById.content = note.content
-                    noteById.updatedat = note.updatedAt
+                    noteById.updatedat = DateTimeUtils.getCurrentDateAsLong()
                     noteById
                 }.toNote()
             }

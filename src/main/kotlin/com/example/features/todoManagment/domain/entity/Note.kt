@@ -6,6 +6,6 @@ data class Note(
     val id: UUID = UUID.randomUUID(),
     var title: String,
     var content: String,
-    val createdAt: Long,
-    var updatedAt: Long
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis(),
 )

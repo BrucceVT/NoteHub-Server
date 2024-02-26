@@ -67,9 +67,7 @@ fun Route.notesRoutes() {
                Note(
                    id = idUUID,
                    title = updatedNote.title,
-                   content = updatedNote.content,
-                   createdAt = updatedNote.createdAt,
-                   updatedAt = updatedNote.updatedAt,
+                   content = updatedNote.content
                )
             )
             resultEither.fold(
@@ -91,7 +89,7 @@ fun Route.notesRoutes() {
                         call.respond(HttpStatusCode.BadRequest, "Invalid note ID $failure")
                     },
                     { noteList ->
-                        call.respond(HttpStatusCode.NoContent, "Successfully removed $noteList")
+                        call.respond(HttpStatusCode.OK, "Successfully removed")
                     }
                 )
             } else {
