@@ -13,6 +13,7 @@ class DeleteNoteUseCase(
         return noteRepository.deleteNote(id).mapLeft {
             when (it) {
                 is InaccessibleData -> NoteDomainFailure.NoteDeleteUnavailable
+                is NotFound -> NoteDomainFailure.NotFound
                 else -> NoteDomainFailure.UnknownError
             }
         }

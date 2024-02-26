@@ -13,7 +13,7 @@ class UpdateNoteUseCase(
         return noteRepository.updateNote(note).mapLeft {
             when (it) {
                 is InaccessibleData -> NoteDomainFailure.NoteUpdateUnavailable
-                else -> NoteDomainFailure.UnknownError
+                else -> NoteDomainFailure.NotFound
             }
         }
     }

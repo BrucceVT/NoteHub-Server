@@ -13,6 +13,7 @@ class GetNoteListUseCase(
         return noteRepository.getNoteList().mapLeft {
             when (it) {
                 is InaccessibleData -> NoteDomainFailure.NoteListUnavailable
+                is NotFound -> NoteDomainFailure.NotFound
                 else -> NoteDomainFailure.UnknownError
             }
         }

@@ -14,6 +14,7 @@ class GetNoteDetailUseCase(
         return noteRepository.getNoteById(id).mapLeft {
             when (it) {
                 is InaccessibleData -> NoteDomainFailure.NoteDetailUnavailable
+                is NotFound -> NoteDomainFailure.NotFound
                 else -> NoteDomainFailure.UnknownError
             }
         }

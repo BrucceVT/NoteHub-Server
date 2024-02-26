@@ -12,6 +12,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.util.*
+import com.example.features.todoManagment.presentation.utils.*
+
 
 private const val ENDPOINT = "api/notes"
 
@@ -24,7 +26,7 @@ fun Route.notesRoutes() {
             val noteListEither = noteService.getNoteList()
             noteListEither.fold(
                 { failure ->
-                    call.respond(HttpStatusCode.BadRequest, "Ocurrio un error $failure")
+                    call.respond(HttpStatusCode.BadRequest, "An error occurred $failure")
                 },
                 { noteList ->
                     call.respond(HttpStatusCode.OK, noteList)
@@ -32,9 +34,13 @@ fun Route.notesRoutes() {
             )
         }
         get("/{id}") {
+            //val noteId = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Note ID is missing")
             val noteId = call.parameters["id"]
-            val id = UUID.fromString(noteId)
-            if (noteId != null) {
+            if (noteId.isNullOrBlank() || noteId.length > 36) {
+                return@get call.respond(HttpStatusCode.BadRequest, "Note ID is missing, empty or too long")
+            }
+            try {
+                val id = UUID.fromString(noteId)
                 val noteEither = noteService.getNoteDetail(id)
                 noteEither.fold(
                     { failure ->
@@ -44,45 +50,61 @@ fun Route.notesRoutes() {
                         call.respond(HttpStatusCode.OK, noteList)
                     }
                 )
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "An error occurred")
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, "Note ID is not a valid UUID")
             }
         }
         post {
-            val createdNoteEither = noteService.createNote(call.receive())
-            createdNoteEither.fold(
-                { failure ->
-                    call.respond(HttpStatusCode.BadRequest, "An error occurred $failure")
-                },
-                { noteList ->
-                    call.respond(HttpStatusCode.Created, noteList)
-                }
-            )
+            try {
+                val createdNoteEither = noteService.createNote(call.receive())
+                createdNoteEither.fold(
+                    { failure ->
+                        call.respond(HttpStatusCode.BadRequest, "An error occurred $failure")
+                    },
+                    { noteList ->
+                        call.respond(HttpStatusCode.Created, noteList)
+                    }
+                )
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "The request body contains invalid fields")
+            }
         }
         put("/{id}") {
             val noteId = call.parameters["id"]
-            val idUUID: UUID = UUID.fromString(noteId)
-            val updatedNote = call.receive<UpdateNoteDto>()
-            val resultEither = noteService.updateNote(
-               Note(
-                   id = idUUID,
-                   title = updatedNote.title,
-                   content = updatedNote.content
-               )
-            )
-            resultEither.fold(
-                { failure ->
-                    call.respond(HttpStatusCode.BadRequest, "Invalid note ID $failure")
-                },
-                { noteList ->
-                    call.respond(HttpStatusCode.OK, noteList)
-                }
-            )
+            if (noteId.isNullOrBlank() || noteId.length > 36) {
+                return@put call.respond(HttpStatusCode.BadRequest, "Note ID is missing, empty or too long")
+            }
+            try {
+                val idUUID: UUID = UUID.fromString(noteId)
+                val updatedNote = call.receive<UpdateNoteDto>()
+                val resultEither = noteService.updateNote(
+                    Note(
+                        id = idUUID,
+                        title = updatedNote.title,
+                        content = updatedNote.content
+                    )
+                )
+                resultEither.fold(
+                    { failure ->
+                        call.respond(HttpStatusCode.BadRequest, "Invalid note ID $failure")
+                    },
+                    { noteList ->
+                        call.respond(HttpStatusCode.OK, noteList)
+                    }
+                )
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, "Note ID is not a valid UUID")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "The request body contains invalid fields")
+            }
         }
         delete("/{id}") {
             val noteId = call.parameters["id"]
-            val id = UUID.fromString(noteId)
-            if (noteId != null) {
+            if (noteId.isNullOrBlank() || noteId.length > 36) {
+                return@delete call.respond(HttpStatusCode.BadRequest, "Note ID is missing, empty or too long")
+            }
+            try {
+                val id = UUID.fromString(noteId)
                 val deleteNoteEither = noteService.deleteNote(id)
                 deleteNoteEither.fold(
                     { failure ->
@@ -92,9 +114,10 @@ fun Route.notesRoutes() {
                         call.respond(HttpStatusCode.OK, "Successfully removed")
                     }
                 )
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "An error occurred")
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, "Note ID is not a valid UUID")
             }
+
         }
     }
 

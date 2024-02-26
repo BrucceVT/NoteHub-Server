@@ -19,16 +19,8 @@ val noteModule = module {
             get(),
         )
     }
+    single { NoteManager(get()) }
     single { NoteServiceApp(get()) }
-    single {
-        NoteManager(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-        )
-    }
 
     single<GetNoteListUseCase> { GetNoteListUseCase(get()) }
     single<GetNoteDetailUseCase> { GetNoteDetailUseCase(get()) }
