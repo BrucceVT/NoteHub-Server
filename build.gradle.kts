@@ -8,10 +8,8 @@ val h2_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.22"
-//    kotlin("plugin.serialization") version "1.9.22"
     id("io.ktor.plugin") version "2.3.8"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
-//    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
 }
 
 group = "com.example"
@@ -33,10 +31,6 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("io.arrow-kt:arrow-core:1.2.0")
-//    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
-//    implementation("io.arrow-kt:arrow-optics:1.2.0")
-//    ksp("io.arrow-kt:arrow-optics-ksp-plugin:1.2.0")
-//    implementation("io.ktor:ktor-server-resources:$ktor_version")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
